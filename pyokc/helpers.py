@@ -148,19 +148,15 @@ def get_profile_basics(div, profiles):
             except IndexError:
                 id = div.xpath(".//button[@id = 'personality-rating']/@data-tuid")[0]
             try:
-                desc_div = div.xpath(".//div[@class = 'percentages hide_on_hover ']")[0]
+                match = int(div.xpath(".//div[@class = 'percentage_wrapper match']/span")[0].text.strip().split('%')[0])
             except IndexError:
-                desc_div = div.xpath(".//div[@class = 'percentages hide_on_hover hidden']")[0]
-            if desc_div.text.replace(' ', '')[1] == '%':
-                percentage = int(desc_div.text.replace(' ', '')[0])
-            else:
-                percentage = int(desc_div.text.replace(' ', '')[:2])
+                match = 0
+            try:
+                enemy = int(div.xpath(".//div[@class = 'percentage_wrapper enemy']/span")[0].text.strip().split('%')[0])
+            except IndexError:
+                enemy = 0
             # Should be match unless the order_by kwarg is
             # set to 'enemy'
-            if 'Match' in desc_div.text:
-                match = percentage
-            elif 'Enemy' in desc_div.text:
-                enemy = percentage
             profile_info = {
                 'name': name,
                 'age': age,

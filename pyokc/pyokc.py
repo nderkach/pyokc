@@ -1,5 +1,6 @@
 import re
 from lxml import html
+from lxml.etree import ParserError
 try:
     from pyokc import helpers
     from pyokc import magicnumbers
@@ -316,7 +317,14 @@ class User:
             'leftbar_match': 1,
             }
         profile_request = self._session.post('http://www.okcupid.com/profile/{0}'.format(prfl.name), data=params)
-        profile_tree = html.fromstring(profile_request.content.decode('utf8'))
+
+        try:
+            profile_tree = html.fromstring(profile_request.content.decode('utf8'))
+        except ParserError:
+            # lxml is unable to parse some profiles
+            # TODO: consider stripping it beforehand
+            return None
+
         prfl.match, prfl.enemy = helpers.get_percentages(profile_tree)
         prfl.age, prfl.gender, prfl.orientation, prfl.status = helpers.get_additional_info(profile_tree)
         if len(profile_tree.xpath("//div[@id = 'rating']")):

@@ -22,7 +22,8 @@ class TestSequenceFunctions(unittest.TestCase):
         for p in profiles[:3]:
             self.assertTrue(prev_match_percentage >= p.match)
             prev_match = p.match
-            self.u1.visit(p)
+            if not self.u1.visit(p):
+                continue
             self.assertTrue(25 <= p.age <= 30)
             self.assertEqual(p.gender, 'Female')
             self.assertEqual(p.orientation, 'Straight')
@@ -57,7 +58,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.u1.update_mailbox('outbox', pages=1)
         m1 = self.u1.outbox[0]
         self.u1.read(m1)
-        self.assertEqual(m1.messages[0][4:], mtext)
+        self.assertEqual(m1.messages[-1][4:], mtext)
         
 
 if __name__ == '__main__':
